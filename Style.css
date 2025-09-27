@@ -1,0 +1,98 @@
+body {
+    font-family: Arial;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    background: #35424a;
+    color: #ffffff;
+    padding: 10px 0;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+nav ul li a {
+    color: blue;
+    text-decoration: none;
+}
+
+main {
+    padding: 20px;
+}
+
+h1 {
+    color: #35424a;
+}
+
+.profile-photo {
+    width: 150px;
+    border-radius: 50%;
+}
+
+table {
+    width: 100%;
+    margin: 10px 0;
+}
+
+th, td {
+    border: 1px solid #35424a;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #35424a;
+    color: white;
+}
+
+form {
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+input, textarea {
+    width: 20%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+a:hover {
+  color: cyan;
+  background-color: blue;
+}
+
+button {
+    background: #008CBA;
+    color: white;
+    border: 2px solid #04AA6D;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+input[type=submit] {
+    padding:5px 15px; 
+    background: white;
+    hover: #CF4647;
+    border:2px solid darkblue;
+    cursor:pointer;
+    -webkit-border-radius: 5px;
+    border-radius: 5px; 
+}

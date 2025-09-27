@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NourishNet SaaS Prototype</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; display: flex; height: 100vh; }
+    #sidebar { width: 320px; background: #f4f4f4; padding: 15px; overflow-y: auto; }
+    #map { flex: 1; }
+    h2 { margin-top: 1em; font-size: 1.2em; }
+    input, select, button, textarea { width: 100%; margin: 5px 0; padding: 6px; }
+    button { cursor: pointer; background: #0077cc; color: white; border: none; border-radius: 4px; }
+    button:hover { background: #005fa3; }
+    .subscriber-list, .menu-list { margin-top: 10px; }
+    .subscriber-item { padding: 4px; background: #ddd; margin: 2px 0; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div id="sidebar">
+    <h2>Vendor Dashboard</h2>
+    <h3>Add Subscriber</h3>
+    <input id="subName" placeholder="Subscriber Name">
+    <input id="subAddress" placeholder="Subscriber Address">
+    <button onclick="addSubscriber()">Add Subscriber</button>
+    <div class="subscriber-list" id="subscriberList"></div>
+
+    <h3>Publish Menu</h3>
+    <textarea id="menuText" placeholder="Enter daily menu"></textarea>
+    <button onclick="publishMenu()">Publish</button>
+    <div class="menu-list" id="menuList"></div>
+
+    <h3>Generate Routes</h3>
+    <button onclick="generateRoutes()">Generate Optimized Route</button>
+
+    <h3>Driver Simulator</h3>
+    <button onclick="simulateDriver()">Simulate Delivery</button>
+  </div>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([19.076, 72.8777], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    let subscribers = [];
+    let markers = [];
+    let routeLine;
+    let driverMarker;
+
+    function addSubscriber() {
+      const name = document.getElementById('subName').value;
+      const address = document.getElementById('subAddress').value;
+      if (!name || !address) return alert('Please enter name and address');
+
+      // Geocode address (using Nominatim API)
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.length === 0) {
+            alert('Address not found');
+            return;
+          }
+          const lat = parseFloat(data[0].lat);
+          const lon = parseFloat(data[0].lon);
+          const subscriber = { name, address, lat, lon };
+          subscribers.push(subscriber);
+          renderSubscribers();
+        });
+    }
+
+    function renderSubscribers() {
+      const list = document.getElementById('subscriberList');
+      list.innerHTML = '';
+      markers.forEach(m => map.removeLayer(m));
+      markers = [];
+
+      subscribers.forEach(sub => {
+        const div = document.createElement('div');
+        div.className = 'subscriber-item';
+        div.textContent = `${sub.name} - ${sub.address}`;
+        list.appendChild(div);
+
+        const marker = L.marker([sub.lat, sub.lon]).addTo(map).bindPopup(sub.name);
+        markers.push(marker);
+      });
+    }
+
+    function publishMenu() {
+      const text = document.getElementById('menuText').value;
+      if (!text) return;
+      const list = document.getElementById('menuList');
+      const div = document.createElement('div');
+      div.className = 'subscriber-item';
+      div.textContent = text;
+      list.appendChild(div);
+      document.getElementById('menuText').value = '';
+    }
+
+    function generateRoutes() {
+      if (subscribers.length < 2) return alert('Add at least 2 subscribers');
+
+      // Simple nearest-neighbor algorithm
+      let unvisited = [...subscribers];
+      let current = unvisited.shift();
+      let route = [current];
+
+      while (unvisited.length) {
+        let nearestIndex = 0;
+        let nearestDist = distance(current, unvisited[0]);
+        for (let i = 1; i < unvisited.length; i++) {
+          let d = distance(current, unvisited[i]);
+          if (d < nearestDist) {
+            nearestDist = d;
+            nearestIndex = i;
+          }
+        }
+        current = unvisited.splice(nearestIndex, 1)[0];
+        route.push(current);
+      }
+
+      const latlngs = route.map(r => [r.lat, r.lon]);
+      if (routeLine) map.removeLayer(routeLine);
+      routeLine = L.polyline(latlngs, { color: 'blue' }).addTo(map);
+      map.fitBounds(routeLine.getBounds());
+    }
+
+    function distance(a, b) {
+      const dx = a.lat - b.lat;
+      const dy = a.lon - b.lon;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    function simulateDriver() {
+      if (!routeLine) return alert('Generate route first');
+      const latlngs = routeLine.getLatLngs();
+      let i = 0;
+
+      if (driverMarker) map.removeLayer(driverMarker);
+      driverMarker = L.marker(latlngs[0], { icon: L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/1946/1946412.png',
+        iconSize: [25, 25]
+      }) }).addTo(map);
+
+      function move() {
+        if (i >= latlngs.length) return;
+        driverMarker.setLatLng(latlngs[i]);
+        i++;
+        setTimeout(move, 1000);
+      }
+      move();
+    }
+  </script>
+</body>
+</html>

@@ -1,72 +1,66 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title> Vendor Login</title>
-    <script>
-        function data() {
-            var a = document.getElementById("b1").value; // User name
-            var b = document.getElementById("b2").value; // Contact no.
-            var e = document.getElementById("b5").value; // Email
-            var c = document.getElementById("b6").value; // Feedback
+  <title>Vendor Login</title>
+  <script>
+    function data(event) {
+      event.preventDefault(); // stop normal form submission
 
-            // Check if any field is empty
-            if (a == "" || b == "" || e == "" || c == "") {
-                alert("All fields are mandatory");
-                return false;
-            }
+      var a = document.getElementById("b1").value.trim(); // User name
+      var b = document.getElementById("b2").value.trim(); // Contact no.
+      var e = document.getElementById("b5").value.trim(); // Email
+      var c = document.getElementById("b6").value.trim(); // Address
 
-            // Check if contact number is exactly 10 digits
-            else if (b.length != 10) {
-                alert("Enter a 10-digit contact number");
-                return false;
-            }
+      // Check if any field is empty
+      if (a === "" || b === "" || e === "" || c === "") {
+        alert("All fields are mandatory");
+        return false;
+      }
 
-            // Check if contact number contains only digits
-            else if (isNaN(b)) {
-                alert("Only numbers are allowed for contact");
-                return false;
-            }
+      // Check if contact number is exactly 10 digits
+      if (b.length !== 10) {
+        alert("Enter a 10-digit contact number");
+        return false;
+      }
 
-            // Email validation using regular expression
-            var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-            if (!emailPattern.test(e)) {
-                alert("Please enter a valid email address.");
-                return false;
-            }
+      // Check if contact number contains only digits
+      if (isNaN(b)) {
+        alert("Only numbers are allowed for contact");
+        return false;
+      }
 
-            return true; // All validations passed, form can be submitted
-        }
-    </script>
-    <link rel="stylesheet" href="Style.css">
+      // Email validation using regular expression
+      var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+      if (!emailPattern.test(e)) {
+        alert("Please enter a valid email address.");
+        return false;
+      }
+
+      // All validations passed → open dashboard.html
+      window.open("dashboard.html", "_blank"); 
+      return true;
+    }
+  </script>
+  <link rel="stylesheet" href="Style.css">
 </head>
 <body>
-    <nav>
-		<ul>   
-			<li>  
-				<a href="About Me.html"> Home </a>  
-			</li>  
-			<li>  
-				<a href="Achievements.html"> Customer App </a>  
-			</li>  
-			<!--
-			<li>  
-				<a href="Fancy table.html"> My fancy table </a>  
-			</li>  
-			-->
-			<li> <a href="Feedback link.html"> Vendor Login </a>  
-			</li>  
-		</ul>
-	</nav>
+  <nav>
+    <ul>   
+      <li><a href="About Me.html"> Home </a></li>  
+      <li><a href="Achievements.html"> Customer App </a></li>  
+      <li><a href="Feedback link.html"> Vendor Login </a></li>  
+    </ul>
+  </nav>
 
-    <h2>Vendor Login</h2>
-    <form onsubmit="return data()" action="Feedback link.html">
-        User name: <input type="text" id="b1" placeholder="Your name"></br>
-        Contact No.: <input type="text" id="b2" placeholder="Mobile number"></br>
-        Email Id: <input type="email" id="b5" placeholder="Email address"></br>
-        Address: <input type="text" id="b6" placeholder="Enter address"></br>
-        License number: <input type="text" id="b6" placeholder="Fssai license number"></br>
+  <h2>Vendor Login</h2>
+  <form onsubmit="data(event)">
+    User name: <input type="text" id="b1" placeholder="Your name"><br>
+    Contact No.: <input type="text" id="b2" placeholder="Mobile number"><br>
+    Email Id: <input type="email" id="b5" placeholder="Email address"><br>
+    Address: <input type="text" id="b6" placeholder="Enter address"><br>
+    License number: <input type="text" id="b7" placeholder="FSSAI license number"><br>
 
-        <p><input type="submit" value="Login"></p>
-    </form>
+    <p><input type="submit" value="Login"></p>
+  </form>
 </body>
 </html>
