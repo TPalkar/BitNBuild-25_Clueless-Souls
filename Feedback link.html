@@ -30,7 +30,7 @@
       }
 
       // Email validation using regular expression
-      var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+      var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3}$/;
       if (!emailPattern.test(e)) {
         alert("Please enter a valid email address.");
         return false;
